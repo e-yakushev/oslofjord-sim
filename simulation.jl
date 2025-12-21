@@ -20,12 +20,12 @@ function parse_commandline()
         "--grid_path"
         help = "Path to the bathymetry NetCDF file."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "bathymetry_105to232.nc")
+        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "bathymetry_drammen.nc") #"bathymetry_105to232.nc")
 
         "--forcing_path"
         help = "Path to the forcing NetCDF file."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "forcing_105to232.nc")
+        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "forcing_drammen.nc") #"forcing_105to232.nc")
 
         "--atmospheric_forcing_path"
         help = "Path to the atmospheric JRA55 forcing directory."
@@ -76,7 +76,7 @@ function main()
     # tracers = (:T, :S, :e, :ϵ)
     tracers = (:T, :S, :e, :ϵ, :C, :NUT, :P, :HET, :POM, :DOM, :O₂)
     # initial_conditions = (T=5.0, S=33.0)
-    initial_conditions = (T = 5.0, S = 33.0, C = 0.0, NUT = 10.0, P = 0.05, HET = 0.01, O₂ = 200.0, DOM = 1.0)
+    initial_conditions = (T = 5.0, S = 32.0, C = 0.0, NUT = 10.0, P = 0.05, HET = 0.01, O₂ = 150.0, DOM = 1.0)
     free_surface = SplitExplicitFreeSurface(grid, cfl=0.7)
     coriolis = HydrostaticSphericalCoriolis(FT)
     forcing = forcing_from_file(;
@@ -126,7 +126,7 @@ function main()
         stop_time,
     )
 
-    simulation.callbacks[:progress] = Callback(progress, TimeInterval(6hours))
+    simulation.callbacks[:progress] = Callback(progress, TimeInterval(12hours))
 
     ocean_sim = simulation.model.ocean
     ocean_model = ocean_sim.model
