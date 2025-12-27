@@ -20,7 +20,7 @@ function parse_commandline()
         "--grid_path"
         help = "Path to the bathymetry NetCDF file."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "bathymetry_drammen.nc") #"bathymetry_105to232.nc")
+        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "bathymetry_drammen1.nc") #"bathymetry_105to232.nc")
 
         "--forcing_path"
         help = "Path to the forcing NetCDF file."
