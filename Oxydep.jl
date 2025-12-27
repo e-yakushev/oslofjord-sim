@@ -105,12 +105,12 @@ function OXYDEP(grid;
     alphaI::FT = 1.8,   # [d-1/(W/m2)]
     betaI::FT = 5.2e-4, # [d-1/(W/m2)]
     gammaD::FT = 0.71,  # (-)
-    Max_uptake::FT = 1.7 / day,  # 1/d 2.0 4 5
-    Knut::FT = 1.5,            # (nd)
+    Max_uptake::FT = 1.4 / day,  # 1/d 2.0 4 5
+    Knut::FT = 1.0,            # (nd)
     r_phy_nut::FT = 0.10 / day, # 1/d
     r_phy_pom::FT = 0.15 / day, # 1/d
     r_phy_dom::FT = 0.17 / day, # 1/d
-    r_phy_het::FT = 0.5 / day,  # 1/d 0.4
+    r_phy_het::FT = 1.0 / day,  # 1/d 0.4
     Kphy::FT = 0.1,             # (nd) 0.7
     r_pom_het::FT = 0.7 / day,  # 1/d 0.7
     Kpom::FT = 2.0,     # (nd)
@@ -121,7 +121,7 @@ function OXYDEP(grid;
     r_pom_nut_oxy::FT = 0.006 / day, # 1/d
     r_pom_dom::FT = 0.05 / day,      # 1/d
     r_dom_nut_oxy::FT = 0.10 / day,  # 1/d
-    O2_suboxic::FT = 30.0,    # mmol/m3
+    O2_suboxic::FT = 20.0,    # mmol/m3
     r_pom_nut_nut::FT = 0.010 / day, # 1/d
     r_dom_nut_nut::FT = 0.003 / day, # 1/d
     OtoN::FT = 8.625, # (nd)
@@ -136,7 +136,7 @@ function OXYDEP(grid;
     sediment_model::S = nothing,
     TS_forced::Bool = false,
     Chemicals::Bool = false,
-    sinking_speeds = (P = 0.15 / day, HET = 4.0 / day, POM = 10.0 / day),
+    sinking_speeds = (P = 0.15 / day, HET = 4.0 / day, POM = 5.0 / day),
     open_bottom::Bool = true,
     scale_negatives = true,
     particles::P = nothing,
@@ -549,13 +549,13 @@ end
 @inline sinking_tracers(bgc::OXYDEP) = keys(bgc.sinking_velocities)
 
 # OXYDEP constants
-const O2_suboxic = 10.0  # OXY threshold for oxic/suboxic switch (mmol/m3)
+const O2_suboxic = 20.0  # OXY threshold for oxic/suboxic switch (mmol/m3)
 const Trel = 5000000.0 # 250000.0 OK    #25000.0 #10000.0     # Relaxation time for exchange with the sediments (s/m)
 const b_ox = 15.0        # difference of OXY in the sediment and water, 
 const b_NUT = 10.0       # NUT in the sediment, (mmol/m3)  
 const b_DOM_ox = 6.0     # OM in the sediment (oxic conditions), (mmol/m3) 
 const b_DOM_anox = 10.0   # OM in the sediment (anoxic conditions), (mmol/m3)  
-const bu = 0.8  #0.85 0.6          # Burial coeficient for lower boundary (0<Bu<1), 1 - for no burying, (nd)
+const bu = 0.3  #0.85 0.6          # Burial coeficient for lower boundary (0<Bu<1), 1 - for no burying, (nd)
 const windspeed = 5.0    # wind speed 10 m, (m/s)
 
 """ BGC boundary conditions """
