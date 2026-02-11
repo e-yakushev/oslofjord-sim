@@ -22,7 +22,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: europe-west1-docker.pkg.dev/niva-cd/images/${{ env.IMAGE_NAME }}
+        images: europe-west1-docker.pkg.dev/niva-cd/jobs/${{ env.IMAGE_NAME }}
         tags: |
           type=sha,prefix=
           type=raw,value=latest
