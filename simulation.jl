@@ -11,34 +11,63 @@ using .OXYDEPModel
 
 const FT = Oceananigans.defaults.FloatType
 
+function select_arch(arch_str::AbstractString)
+    arch = lowercase(strip(arch_str))
+
+    if arch == "cpu"
+        return CPU()
+    elseif arch == "gpu"
+        try
+            return GPU()  # will throw if no CUDA GPU
+        catch err
+            @warn "GPU requested but unavailable; falling back to CPU()." exception=(err, catch_backtrace())
+            return CPU()
+        end
+    else
+        error("Invalid --arch value: $(repr(arch_str)). Use 'cpu' or 'gpu'.")
+    end
+end
+
 # ----------------------------------------------------------
 # Command-line argument parser
 # ----------------------------------------------------------
+
 function parse_commandline()
     s = ArgParseSettings()
+
+    # Paths relative to the location of the script file itself
+    base_dir = @__DIR__
+
     @add_arg_table! s begin
         "--grid_path"
         help = "Path to the bathymetry NetCDF file."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "bathymetry_drammen1.nc") #"bathymetry_105to232.nc")
+        default = joinpath(base_dir, "data", "input", "bathymetry_drammen1.nc")
 
         "--forcing_path"
         help = "Path to the forcing NetCDF file."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "oslofjord", "forcing_drammen.nc") #"forcing_105to232.nc")
+        default = joinpath(base_dir, "data", "input", "forcing_drammen.nc")
 
         "--atmospheric_forcing_path"
         help = "Path to the atmospheric JRA55 forcing directory."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_data", "JRA55")
+        default = joinpath(base_dir, "data", "input", "JRA55")
 
         "--results_path"
         help = "Directory where results are stored."
         arg_type = String
-        default = joinpath(homedir(), "FjordSim_results", "oslofjord")
+        default = joinpath(base_dir, "data", "output")
+
+        "--arch"
+        help = "Compute architecture: cpu (default) or gpu. If gpu is requested but unavailable, falls back to cpu."
+        arg_type = String
+        default = "cpu"
     end
+
     return parse_args(s)
 end
+
 
 # ----------------------------------------------------------
 # Main simulation setup
@@ -51,7 +80,9 @@ function main()
     println("  atmospheric_forcing_path = $(args["atmospheric_forcing_path"])")
     println("  results_path = $(args["results_path"])")
 
-    arch = GPU()
+    args = parse_commandline()
+    arch = select_arch(args["arch"])
+
     grid = ImmersedBoundaryGrid(args["grid_path"], arch, (7, 7, 7))
     buoyancy = SeawaterBuoyancy(FT, equation_of_state=TEOS10EquationOfState(FT))
     closure = (
