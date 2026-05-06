@@ -1,0 +1,20 @@
+{
+  "example": {
+    "grid_file": "bathymetry_105to232.nc",
+    "forcing_file": "forcing_105to232.nc",
+    "atmospheric_forcing_dir": "JRA55",
+    "hotstart_file": "snapshots_ocean.nc"
+  },
+  "drammensfjord-bgc": {
+    "grid_file": "bathymetry_19to67.nc",
+    "forcing_file": "forcing_drammen4.nc",
+    "atmospheric_forcing_dir": "JRA55",
+    "hotstart_file": "snapshots_ocean_df.nc"
+  },
+  "drammensfjord-bgc-mp": {
+    "grid_file": "bathymetry_19to67.nc",
+    "forcing_file": "forcing_drammen6.nc",
+    "atmospheric_forcing_dir": "JRA55",
+    "hotstart_file": "snapshots_ocean_df.nc"
+  }
+}

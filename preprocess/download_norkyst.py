@@ -8,6 +8,8 @@ import xarray as xr
 
 from oslofjord_sim.stuff import list_opendap_files
 
+BASEDIR = Path(os.environ["PROJECT_ROOT"])
+
 OPENDAP_URL = "https://thredds.met.no/thredds/dodsC/fou-hi/norkyst800m/"
 PARAMETERS = ["temperature", "salinity", "u_eastward", "v_northward"]
 LATITUDE_RANGE = (58, 60)
@@ -27,7 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path.home() / "FjordSim_data" / "oslofjord",
+        default=BASEDIR / "data" / "input",
         help="Output directory for NetCDF files",
     )
     return parser.parse_args()
@@ -58,15 +60,19 @@ def process_month(year: int, month: int, output_dir: Path) -> None:
         ds = xr.open_dataset(url)[PARAMETERS]
         if mask is None:
             mask = (
-                (ds.lat >= LATITUDE_RANGE[0]) & (ds.lat <= LATITUDE_RANGE[1]) &
-                (ds.lon >= LONGITUDE_RANGE[0])  & (ds.lon <= LONGITUDE_RANGE[1])
+                (ds.lat >= LATITUDE_RANGE[0])
+                & (ds.lat <= LATITUDE_RANGE[1])
+                & (ds.lon >= LONGITUDE_RANGE[0])
+                & (ds.lon <= LONGITUDE_RANGE[1])
             )
         ds = ds.where(mask, drop=True)
         dss.append(ds)
         print(f"    Opened: {url}")
 
     print("  Combining datasets ...")
-    ds = xr.combine_by_coords(dss, compat="no_conflicts", combine_attrs="override", coords="different")
+    ds = xr.combine_by_coords(
+        dss, compat="no_conflicts", combine_attrs="override", coords="different"
+    )
 
     encoding = {var: {"zlib": True, "complevel": 5} for var in ds.data_vars}
 
